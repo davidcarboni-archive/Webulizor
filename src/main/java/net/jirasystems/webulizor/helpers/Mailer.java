@@ -54,6 +54,10 @@ public final class Mailer {
 			String name = "/mail.properties";
 			try {
 				fMailServerConfig = ResourceUtil.getProperties("/mail.properties");
+//				Properties result = new Properties(fMailServerConfig);
+//				result.putAll(System.getProperties());
+//				result.putAll(fMailServerConfig);
+//				fMailServerConfig = result;
 			} catch (IOException ex) {
 				throw new RuntimeException("Cannot open " + name);
 			}
