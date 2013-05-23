@@ -19,4 +19,11 @@ public @interface Route {
 	 *         leading slash. If not, Webulizor will add one on the fly.
 	 */
 	String path() default "";
+
+	/**
+	 * @return Allows you to refer to a different action class for the path. This means one class
+	 *         can define the route and another can refer to it, e.g. classes for GET and POST to
+	 *         the same URL.
+	 */
+	Class<Action> sameAs() default Action.class;
 }

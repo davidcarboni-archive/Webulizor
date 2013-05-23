@@ -36,15 +36,20 @@ public class Path {
 	public static String getPath(Class<? extends Action> actionClass) {
 		String path = null;
 
-		// Get the path:
 		if (actionClass.getAnnotation(HomeAction.class) != null) {
+			// This is the home action:
 			path = "/";
 		} else {
 			Route route = actionClass.getAnnotation(Route.class);
 			try {
 				if (StringUtils.isNotBlank(route.path())) {
+					// An explicit path is defined:
 					path = route.path();
+				} else if (route.sameAs() != Action.class) {
+					// The path is the same as another class:
+					path = getPath(route.sameAs());
 				} else {
+					// Default to convention:
 					path = actionClass.getSimpleName().toLowerCase();
 				}
 			} catch (NullPointerException e) {
