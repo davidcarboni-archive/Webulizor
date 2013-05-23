@@ -25,5 +25,5 @@ public @interface Route {
 	 *         can define the route and another can refer to it, e.g. classes for GET and POST to
 	 *         the same URL.
 	 */
-	Class<Action> sameAs() default Action.class;
+	Class<? extends Action> sameAs() default Action.class;
 }

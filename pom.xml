@@ -4,7 +4,7 @@
 	<groupId>net.jirasystems</groupId>
 	<artifactId>webulizor</artifactId>
 	<packaging>war</packaging>
-	<version>0.6.0</version>
+	<version>0.6.1</version>
 	<name>parents-evening Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	
