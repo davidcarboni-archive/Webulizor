@@ -4,42 +4,44 @@
 	<groupId>net.jirasystems</groupId>
 	<artifactId>webulizor</artifactId>
 	<packaging>war</packaging>
-	<version>0.6.1</version>
-	<name>parents-evening Maven Webapp</name>
-	<url>http://maven.apache.org</url>
-	
+	<version>0.6.2-SNAPSHOT</version>
+	<name>Webulizor</name>
+	<description>Webapp micro-framework.</description>
+	<url>https://github.com/davidcarboni/Webulizor</url>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+
+	<scm>
+		<url>https://github.com/davidcarboni/Webulizor</url>
+		<connection>scm:git:git://github.com/davidcarboni/Webulizor.git</connection>
+		<developerConnection>scm:git:git@github.com:davidcarboni/Webulizor.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>nexus</id>
-			<url>http://192.168.4.2:8081/nexus/content/groups/public/</url>
-		</pluginRepository>
-	</pluginRepositories>
-
 	<distributionManagement>
-		<repository>
-			<id>nexus</id>
-			<name>Nexus Releases</name>
-			<url>http://192.168.4.2:8081/nexus/content/repositories/releases</url>
-		</repository>
 		<snapshotRepository>
-			<id>nexus</id>
-			<name>Nexus Snapshots</name>
-			<url>http://192.168.4.2:8081/nexus/content/repositories/snapshots</url>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Sonatype Nexus release repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
 	</distributionManagement>
 
-	<repositories>
-		<repository>
-			<id>nexus</id>
-			<name>Workdocx Artifact repository</name>
-			<url>http://192.168.4.2:8081/nexus/content/groups/public</url>
-		</repository>
-	</repositories>
-	
 	<dependencies>
 
 		<!-- Test: -->
@@ -117,16 +119,28 @@
 	<build>
 		<finalName>webulizor</finalName>
 
+		<!-- Include the README, NOTICE and LICENSE files: -->
+		<resources>
+			<resource>
+				<directory>${project.basedir}</directory>
+				<includes>
+					<include>README*</include>
+					<include>NOTICE*</include>
+					<include>LICENSE*</include>
+				</includes>
+			</resource>
+		</resources>
+
 		<plugins>
 
 			<plugin>
-				<!-- This configures the build to use JVM 1.6 compliance: -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>3.1</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 
@@ -139,11 +153,11 @@
 				</configuration>
 			</plugin>
 
-			<!-- Source JAR -->
+			<!-- source JAR -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2</version>
+				<version>2.2.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -155,11 +169,11 @@
 				</executions>
 			</plugin>
 
-			<!-- Javadoc JAR -->
+			<!-- javadoc JAR -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9</version>
+				<version>2.9.1</version>
 				<executions>
 					<execution>
 						<id>attach-javadoc</id>
@@ -171,7 +185,62 @@
 				</executions>
 			</plugin>
 
-		</plugins>
+			<!-- Release configuration: -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<mavenExecutorId>forked-path</mavenExecutorId>
+				</configuration>
+			</plugin>
 
+		</plugins>
 	</build>
+
+	<profiles>
+
+		<!-- GPG Signature on release -->
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.4</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
+	<!-- Required: developer information: -->
+	<developers>
+		<developer>
+			<id>david</id>
+			<name>David Carboni</name>
+			<email>david@carboni.co</email>
+			<organization>Carboni</organization>
+			<organizationUrl>https://github.com/davidcarboni</organizationUrl>
+			<url>https://github.com/davidcarboni</url>
+		</developer>
+	</developers>
+
 </project>
