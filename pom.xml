@@ -86,9 +86,9 @@
 			<version>1.4.5</version>
 		</dependency>
 		<dependency>
-			<groupId>net.jirasystems</groupId>
-			<artifactId>resource-util</artifactId>
-			<version>1.0.5</version>
+			<groupId>com.github.davidcarboni</groupId>
+			<artifactId>resource-utils</artifactId>
+			<version>1.0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
