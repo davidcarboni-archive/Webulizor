@@ -61,19 +61,22 @@ public class App extends HttpServlet {
 
 		// Set up reflections:
 		ServletContext servletContext = getServletContext();
-		Set<URL> urls = new HashSet<URL>(ClasspathHelper.forWebInfLib(servletContext));
+		Set<URL> urls = new HashSet<URL>(
+				ClasspathHelper.forWebInfLib(servletContext));
 		urls.add(ClasspathHelper.forWebInfClasses(servletContext));
-		Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(urls));
+		Reflections reflections = new Reflections(
+				new ConfigurationBuilder().setUrls(urls));
 
 		// Get annotated classes:
-		Set<Class<? extends Action>> actionClasses = reflections.getSubTypesOf(Action.class);
+		Set<Class<? extends Action>> actionClasses = reflections
+				.getSubTypesOf(Action.class);
 
 		// Configure the classes:
 		for (Class<? extends Action> actionClass : actionClasses) {
 
 			// Check the action for its possible uses.
-			// NB error and not found actions need 
-			// not necessarily be routable: 
+			// NB error and not found actions need
+			// not necessarily be routable:
 			setRoute(actionClass);
 			setHomeAction(actionClass);
 			setErrorAction(actionClass);
@@ -87,7 +90,8 @@ public class App extends HttpServlet {
 	}
 
 	/**
-	 * Determines if the given class is routable via one of the supported HTTP methods.
+	 * Determines if the given class is routable via one of the supported HTTP
+	 * methods.
 	 * 
 	 * @param actionClass
 	 *            The class to inspect.
@@ -107,7 +111,8 @@ public class App extends HttpServlet {
 	}
 
 	/**
-	 * Determines if the given {@link Action} class is the {@link HomeAction} action.
+	 * Determines if the given {@link Action} class is the {@link HomeAction}
+	 * action.
 	 * 
 	 * @param actionClass
 	 *            The class to inspect.
@@ -115,12 +120,15 @@ public class App extends HttpServlet {
 	 * @throws ServletException
 	 *             If a {@link HomeAction} {@link Action} is already defined.
 	 */
-	private boolean setHomeAction(Class<? extends Action> actionClass) throws ServletException {
+	private boolean setHomeAction(Class<? extends Action> actionClass)
+			throws ServletException {
 		if (actionClass.getAnnotation(HomeAction.class) != null) {
 			if (homeAction != null) {
 				// Only one home action can be supported:
-				throw new ServletException("Could not configure " + HomeAction.class + " as " + actionClass.getName()
-						+ " because it is already configured as " + homeAction.getName());
+				throw new ServletException("Could not configure "
+						+ HomeAction.class + " as " + actionClass.getName()
+						+ " because it is already configured as "
+						+ homeAction.getName());
 			}
 			homeAction = actionClass;
 			return true;
@@ -129,7 +137,8 @@ public class App extends HttpServlet {
 	}
 
 	/**
-	 * Determines if the given {@link Action} class is the {@link ExceptionAction}.
+	 * Determines if the given {@link Action} class is the
+	 * {@link ExceptionAction}.
 	 * 
 	 * @param actionClass
 	 *            The class to inspect.
@@ -137,12 +146,16 @@ public class App extends HttpServlet {
 	 * @throws ServletException
 	 *             If an {@link ExceptionAction} is already defined.
 	 */
-	private boolean setErrorAction(Class<? extends Action> actionClass) throws ServletException {
+	private boolean setErrorAction(Class<? extends Action> actionClass)
+			throws ServletException {
 		if (actionClass.getAnnotation(ExceptionAction.class) != null) {
 			if (exceptionAction != null) {
 				// Only one error action can be supported:
-				throw new ServletException("Could not configure " + ExceptionAction.class + " as "
-						+ actionClass.getName() + " because it is already configured as " + exceptionAction.getName());
+				throw new ServletException("Could not configure "
+						+ ExceptionAction.class + " as "
+						+ actionClass.getName()
+						+ " because it is already configured as "
+						+ exceptionAction.getName());
 			}
 			exceptionAction = actionClass;
 			return true;
@@ -151,7 +164,8 @@ public class App extends HttpServlet {
 	}
 
 	/**
-	 * Determines if the given {@link Action} class is the {@link NotFoundAction}.
+	 * Determines if the given {@link Action} class is the
+	 * {@link NotFoundAction}.
 	 * 
 	 * @param actionClass
 	 *            The class to inspect.
@@ -159,12 +173,15 @@ public class App extends HttpServlet {
 	 * @throws ServletException
 	 *             If an {@link NotFoundAction} is already defined.
 	 */
-	private boolean setNotFoundAction(Class<? extends Action> actionClass) throws ServletException {
+	private boolean setNotFoundAction(Class<? extends Action> actionClass)
+			throws ServletException {
 		if (actionClass.getAnnotation(NotFoundAction.class) != null) {
 			if (notFoundAction != null) {
 				// Only one error action can be supported:
-				throw new ServletException("Could not configure " + NotFoundAction.class + " as "
-						+ actionClass.getName() + " because it is already configured as " + notFoundAction.getName());
+				throw new ServletException("Could not configure "
+						+ NotFoundAction.class + " as " + actionClass.getName()
+						+ " because it is already configured as "
+						+ notFoundAction.getName());
 			}
 			notFoundAction = actionClass;
 			return true;
@@ -173,7 +190,8 @@ public class App extends HttpServlet {
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException {
 		try {
 			doMethod(this.get, request, response);
 		} catch (Throwable t) {
@@ -182,7 +200,8 @@ public class App extends HttpServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException {
 		try {
 			doMethod(this.post, request, response);
 		} catch (Throwable t) {
@@ -191,14 +210,16 @@ public class App extends HttpServlet {
 	}
 
 	/**
-	 * Handles an uncaught exception by calling {@link #exceptionAction}, if configured.
+	 * Handles an uncaught exception by calling {@link #exceptionAction}, if
+	 * configured.
 	 * 
 	 * @param t
 	 *            {@link Throwable}.
 	 * @throws ServletException
 	 *             IF {@link #exceptionAction} is not defined.
 	 */
-	private void doError(HttpServletRequest request, Throwable t) throws ServletException {
+	private void doError(HttpServletRequest request, Throwable t)
+			throws ServletException {
 
 		if (this.exceptionAction != null) {
 
@@ -212,13 +233,15 @@ public class App extends HttpServlet {
 			try {
 				errorAction.perform();
 			} catch (Exception e) {
-				throw new ServletException("Unable to process error " + Action.class.getSimpleName(), e);
+				throw new ServletException("Unable to process error "
+						+ Action.class.getSimpleName(), e);
 			}
 
 		} else {
 
 			// If no error action is defined, throw a ServletException:
-			throw new ServletException("Error executing " + request.getRequestURI(), t);
+			throw new ServletException("Error executing "
+					+ request.getRequestURI(), t);
 		}
 	}
 
@@ -236,8 +259,9 @@ public class App extends HttpServlet {
 	 * @throws IOException
 	 *             If an error occurs in one of the Actions.
 	 */
-	private void doMethod(Map<String, Class<? extends Action>> actions, HttpServletRequest request,
-			HttpServletResponse response) throws Throwable {
+	private void doMethod(Map<String, Class<? extends Action>> actions,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Throwable {
 
 		// Variables for this request path:
 		Map<String, Object> context = new HashMap<String, Object>();
@@ -263,29 +287,35 @@ public class App extends HttpServlet {
 	}
 
 	/**
-	 * Sets up a database connection if the given {@link Action} requires one (but does not set it
-	 * in the action - that is done by
-	 * {@link #setup(Action, HttpServletRequest, HttpServletResponse, Connection, Map)}). This
-	 * enables the same {@link Connection} to be shared by all actions in a path if/when any of the
-	 * actions requires one, and that a transaction is started only if/when needed.
+	 * Sets up a database connection if the given {@link Action} requires one
+	 * (but does not set it in the action - that is done by
+	 * {@link #setup(Action, HttpServletRequest, HttpServletResponse, Connection, Map)}
+	 * ). This enables the same {@link Connection} to be shared by all actions
+	 * in a path if/when any of the actions requires one, and that a transaction
+	 * is started only if/when needed.
 	 * 
 	 * @param action
-	 *            The action to be provided with a database {@link Connection} if it requires one.
-	 * @return The database connection, because the connection passed in may be null if no
-	 *         connection has been started yet.
+	 *            The action to be provided with a database {@link Connection}
+	 *            if it requires one.
+	 * @return The database connection, because the connection passed in may be
+	 *         null if no connection has been started yet.
 	 * @throws SQLException
 	 *             If a database error occurs.
 	 */
-	private Connection setupConnection(Action action, Connection connection) throws SQLException {
+	private Connection setupConnection(Action action, Connection connection)
+			throws SQLException {
 		Connection result = connection;
 
 		if (action != null) {
 			// Does the current action in the path need a database connection?
-			DatabaseConnection databaseConnection = action.getClass().getAnnotation(DatabaseConnection.class);
+			DatabaseConnection databaseConnection = action.getClass()
+					.getAnnotation(DatabaseConnection.class);
 
 			// Default to provide a connection, with a transaction:
-			boolean required = databaseConnection == null || databaseConnection.required();
-			boolean transaction = databaseConnection == null || databaseConnection.transaction();
+			boolean required = databaseConnection == null
+					|| databaseConnection.required();
+			boolean transaction = databaseConnection == null
+					|| databaseConnection.transaction();
 
 			if (required) {
 
@@ -307,8 +337,8 @@ public class App extends HttpServlet {
 	}
 
 	/**
-	 * If a {@link Connection} has been created and a transaction in active, commits the
-	 * transaction.
+	 * If a {@link Connection} has been created and a transaction in active,
+	 * commits the transaction.
 	 */
 	private void commitConnection(Connection connection) {
 		if (connection != null) {
@@ -323,8 +353,8 @@ public class App extends HttpServlet {
 	}
 
 	/**
-	 * If a {@link Connection} has been created and a transaction in active, rolls back the
-	 * transaction.
+	 * If a {@link Connection} has been created and a transaction in active,
+	 * rolls back the transaction.
 	 */
 	private void rollbackConnection(Connection connection) {
 		if (connection != null) {
@@ -345,7 +375,7 @@ public class App extends HttpServlet {
 	private void closeConnection(Connection connection) {
 		if (connection != null) {
 			try {
-//				connection.prepareStatement("SHUTDOWN").execute();
+				// connection.prepareStatement("SHUTDOWN").execute();
 				connection.close();
 			} catch (SQLException e) {
 				System.out.println(ExceptionUtils.getStackTrace(e));
@@ -354,7 +384,8 @@ public class App extends HttpServlet {
 	}
 
 	/**
-	 * Sets the {@link HttpServletRequest}, {@link HttpServletResponse} and {@link ServletContext}.
+	 * Sets the {@link HttpServletRequest}, {@link HttpServletResponse} and
+	 * {@link ServletContext}.
 	 * 
 	 * @param action
 	 *            The instance to be set up.
@@ -363,7 +394,8 @@ public class App extends HttpServlet {
 	 * @param response
 	 *            {@link HttpServletResponse}.
 	 */
-	private void setup(Action action, HttpServletRequest request, HttpServletResponse response, Connection connection,
+	private void setup(Action action, HttpServletRequest request,
+			HttpServletResponse response, Connection connection,
 			Map<String, Object> context) {
 		if (action != null) {
 			action.setRequest(request);
@@ -373,8 +405,10 @@ public class App extends HttpServlet {
 
 			// Does this action need a database connection?
 			// Default is to provide a connection:
-			DatabaseConnection databaseConnection = action.getClass().getAnnotation(DatabaseConnection.class);
-			boolean required = databaseConnection == null || databaseConnection.required();
+			DatabaseConnection databaseConnection = action.getClass()
+					.getAnnotation(DatabaseConnection.class);
+			boolean required = databaseConnection == null
+					|| databaseConnection.required();
 			if (required) {
 				action.setConnection(connection);
 			}
@@ -393,23 +427,27 @@ public class App extends HttpServlet {
 	 * @throws AppException
 	 *             If an error occurs.
 	 */
-	private Action mapRequestPath(Map<String, Class<? extends Action>> actions, HttpServletRequest request)
-			throws AppException {
+	private Action mapRequestPath(Map<String, Class<? extends Action>> actions,
+			HttpServletRequest request) throws AppException {
 
 		// Find a class:
 		Class<? extends Action> actionClass = null;
+		String actionKey = null;
 		if (StringUtils.equals("/", request.getPathInfo())) {
 			actionClass = homeAction;
 		} else {
-			for (Entry<String, Class<? extends Action>> action : actions.entrySet()) {
-				if (StringUtils.startsWithIgnoreCase(request.getPathInfo(), action.getKey())) {
+			for (Entry<String, Class<? extends Action>> action : actions
+					.entrySet()) {
+				if (StringUtils.startsWithIgnoreCase(request.getPathInfo(),
+						action.getKey())) {
 					if (actionClass == null) {
 						actionClass = action.getValue();
+						actionKey = action.getKey();
 					} else {
 						// We're looking for the longest match:
-						Class<? extends Action> value = action.getValue();
-						if (value.getSimpleName().length() > actionClass.getSimpleName().length()) {
-							actionClass = value;
+						if (action.getKey().length() > actionKey.length()) {
+							actionClass = action.getValue();
+							actionKey = action.getKey();
 						}
 					}
 				}
@@ -419,7 +457,8 @@ public class App extends HttpServlet {
 		return instantiate(actionClass, request);
 	}
 
-	private Action instantiate(Class<? extends Action> actionClass, HttpServletRequest request) {
+	private Action instantiate(Class<? extends Action> actionClass,
+			HttpServletRequest request) {
 
 		Class<? extends Action> clazz = actionClass;
 
@@ -431,7 +470,8 @@ public class App extends HttpServlet {
 		if (clazz == null) {
 
 			// Not found and no notFoundAction configured:
-			throw new AppException("Unable to match " + request.getMethod() + " request for " + request.getPathInfo()
+			throw new AppException("Unable to match " + request.getMethod()
+					+ " request for " + request.getPathInfo()
 					+ " to an action.");
 
 		}
@@ -446,12 +486,14 @@ public class App extends HttpServlet {
 			}
 
 		} catch (InstantiationException e) {
-			throw new AppException("Unable to instantiate " + clazz.getSimpleName(), e);
+			throw new AppException("Unable to instantiate "
+					+ clazz.getSimpleName(), e);
 		} catch (IllegalAccessException e) {
-			throw new AppException("Unable to instantiate " + clazz.getSimpleName(), e);
+			throw new AppException("Unable to instantiate "
+					+ clazz.getSimpleName(), e);
 		} catch (NullPointerException e) {
-			throw new AppException("No " + Action.class.getSimpleName() + " found for path "
-					+ request.getPathTranslated(), e);
+			throw new AppException("No " + Action.class.getSimpleName()
+					+ " found for path " + request.getPathTranslated(), e);
 		}
 		return result;
 
