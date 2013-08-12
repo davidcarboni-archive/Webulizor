@@ -18,6 +18,8 @@ import org.apache.commons.io.FilenameUtils;
 public class Database {
 
 	private static String url;
+	private static String username = "sa";
+	private static String password = "";
 
 	/**
 	 * Initialises the JDBC driver.
@@ -32,7 +34,8 @@ public class Database {
 		try {
 			Class.forName(driverClass);
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Unable to locate driver class " + driverClass, e);
+			throw new RuntimeException("Unable to locate driver class "
+					+ driverClass, e);
 		}
 
 		setPath(servletContext.getRealPath("WEB-INF/database"));
@@ -40,8 +43,41 @@ public class Database {
 	}
 
 	/**
+	 * Gets a new connection. The caller is responsible for closing the
+	 * connection.
+	 * 
+	 * @return A new connection to the database.
+	 */
+	public static Connection getConnection() {
+
+		Connection connection;
+		try {
+			connection = DriverManager.getConnection(url, username, password);
+		} catch (SQLException e) {
+
+			// We're sometimes attempting to get a connection to
+			// HSQLDB when it's shutting down a connection, so retry:
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				// Ignore;
+			}
+			try {
+				connection = DriverManager.getConnection(url, username,
+						password);
+			} catch (SQLException e2) {
+				throw new RuntimeException("Unable to get a connection to "
+						+ url, e2);
+			}
+		}
+
+		return connection;
+		// return ConnectionSpy.spy(connection);
+	}
+
+	/**
 	 * @param path
-	 *            The filesystem path for the database.
+	 *            The filesystem path for HSQLDB.
 	 */
 	public static void setPath(String path) {
 		File file = new File(path, "database");
@@ -51,37 +87,53 @@ public class Database {
 		// Default to always shutting down the database and no write delay.
 		// We don't need high performance and preference is for committing data
 		// to disk:
-		url = "jdbc:hsqldb:" + fullPath + ";shutdown=true;hsqldb.write_delay=false";
+		url = "jdbc:hsqldb:" + fullPath
+				+ ";shutdown=true;hsqldb.write_delay=false";
 	}
 
 	/**
-	 * Gets a new connection. The caller is responsible for closing the connection.
-	 * 
-	 * @return A new connection to the database.
+	 * @return the url
 	 */
-	public static Connection getConnection() {
+	public static String getUrl() {
+		return url;
+	}
 
-		Connection connection;
-		try {
-			connection = DriverManager.getConnection(url, "sa", "");
-		} catch (SQLException e) {
+	/**
+	 * @param url
+	 *            the url to set
+	 */
+	public static void setUrl(String url) {
+		Database.url = url;
+	}
 
-			// We're sometimes attempting to get a connection to 
-			// HSQLDB when it's shutting down a connection, so retry:
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// Ignore;
-			}
-			try {
-				connection = DriverManager.getConnection(url, "sa", "");
-			} catch (SQLException e2) {
-				throw new RuntimeException("Unable to get a connection to " + url, e2);
-			}
-		}
+	/**
+	 * @return the username
+	 */
+	public static String getUsername() {
+		return username;
+	}
 
-		return connection;
-//		return ConnectionSpy.spy(connection);
+	/**
+	 * @param username
+	 *            the username to set
+	 */
+	public static void setUsername(String username) {
+		Database.username = username;
+	}
+
+	/**
+	 * @return the password
+	 */
+	public static String getPassword() {
+		return password;
+	}
+
+	/**
+	 * @param password
+	 *            the password to set
+	 */
+	public static void setPassword(String password) {
+		Database.password = password;
 	}
 
 }
