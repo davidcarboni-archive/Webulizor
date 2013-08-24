@@ -32,14 +32,20 @@ public class ViewAction extends AbstractAction {
 	}
 
 	/**
-	 * Sets a default template path, which is the fully qualified name of the class with a .html
-	 * suffix.
+	 * Sets a default template path, which is the fully qualified name of the
+	 * class with a .html suffix.
 	 * <p>
 	 * E.g.: /net/jirasystems/webulizor/base/ViewAction.html
 	 */
 	public ViewAction() {
 		// Default template path.
-		this.templatePath = "/" + this.getClass().getName().replace('.', '/') + ".html";
+		this.templatePath = getDefaultTemplatePath(this);
+	}
+
+	public static String getDefaultTemplatePath(Object controller) {
+		// Default template path for a given class:
+		return "/" + controller.getClass().getName().replace('.', '/')
+				+ ".html";
 	}
 
 	@Override
@@ -52,7 +58,8 @@ public class ViewAction extends AbstractAction {
 			return null;
 		}
 
-		throw new AppException("Unable to render view. " + "Template path has not been set in "
+		throw new AppException("Unable to render view. "
+				+ "Template path has not been set in "
 				+ this.getClass().getName() + ".");
 	}
 
