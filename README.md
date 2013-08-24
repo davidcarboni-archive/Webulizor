@@ -37,8 +37,8 @@ The quickest way to get started is:
 Here are some `pom.xml` snippets to get you started:
 
  * Webulizor artifact details:
-  
- ```xml
+ 
+```xml
     <properties>
         <webulizor.groupid>com.github.davidcarboni</webulizor.groupid>
         <webulizor.artifactid>webulizor</webulizor.artifactid>
@@ -83,8 +83,8 @@ Here are some `pom.xml` snippets to get you started:
 ```
 
  * WAR overlay configuration:
- 
- ```xml
+
+```xml
      <build>
         <finalName>mywebapp</finalName>
         
@@ -96,7 +96,7 @@ Here are some `pom.xml` snippets to get you started:
                 <version>2.3</version>
                 <configuration>
                     
-                    <!-- If you inherit the webulizor web.xml you won't need your own: -->
+                    <!-- If you inherit the webulizor web.xml you won't one: -->
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     
                     <overlays>
@@ -108,8 +108,8 @@ Here are some `pom.xml` snippets to get you started:
                     
                 </configuration>
             </plugin>
-            
-    </plugins>
-    
-</build>
+                
+        </plugins>
+        
+    </build>
 ```
