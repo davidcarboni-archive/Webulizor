@@ -5,8 +5,16 @@ Webulizor
 
 ### What is it?
 
-Webulizor is a Java webapp micro-framework. It's built on two ideas: first, that in a world of continuous delivery the best place to put most configuration is directly in the code and second that refactoring code shouldn't break web page links. It's about not having to keep things in synch across code, configuration and HTML.
+Webulizor is a Java webapp micro-framework. It's built on a couple of ideas:
+ * in a world of continuous delivery the best place to put most configuration is directly in the code. If you need to change configuration it's safer to push a release than edit live configuration.
+ * refactoring code shouldn't break links. Why should you have to manually keep things in synch across code, configuration and HTML?
+ * finally, /servlet/ in your URLs is visual noise and just plain ugly. Webulizor lets you put your controllers at the top level whilst forwarding anything that has a file extension to the default servlet (.css, .js, .png, etc.) 
 
+Webulizor provides you with a couple of helpful bootstrap defaults:
+ * HSQLDB so you can get on with prototyping instead of installing a database
+ * Apache Velocity for response rendering
+ 
+Defaults can be overridden or ignored and you're free to configure your own front-controller servlet receive requests dispatched by the Webulizor filter, just copy and tweak the `web.xml` included with Webulizor. 
 
 ### The basics
 
