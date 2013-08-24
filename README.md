@@ -39,79 +39,77 @@ Here are some `pom.xml` snippets to get you started:
  * Webulizor artifact details:
   
  ```xml
- <properties>
- 
-    <webulizor.groupid>com.github.davidcarboni</webulizor.groupid>
-    <webulizor.artifactid>webulizor</webulizor.artifactid>
-    <webulizor.version>0.6.5</webulizor.version>
-    
- </properties>
+    <properties>
+        <webulizor.groupid>com.github.davidcarboni</webulizor.groupid>
+        <webulizor.artifactid>webulizor</webulizor.artifactid>
+        <webulizor.version>0.6.5</webulizor.version>
+    </properties>
 ```
 
  * Webulizor dependencies:
 
 ```xml
- <dependencies>
-
-    <!-- Webulizor: -->
-    <dependency>
-        <groupId>${webulizor.groupid}</groupId>
-        <artifactId>${webulizor.artifactid}</artifactId>
-        <type>war</type>
-        <version>${webulizor.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>${webulizor.groupid}</groupId>
-        <artifactId>${webulizor.artifactid}</artifactId>
-        <version>${webulizor.version}</version>
-        <classifier>classes</classifier>
-    </dependency>
-
-    <!-- You'll probably want the Servlet API: -->
-    <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
-        <scope>provided</scope>
-    </dependency>
-    <!-- or -->
-    <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>3.1.0</version>
-    </dependency>
-        
- </dependencies>
+    <dependencies>
+    
+        <!-- Webulizor: -->
+        <dependency>
+            <groupId>${webulizor.groupid}</groupId>
+            <artifactId>${webulizor.artifactid}</artifactId>
+            <type>war</type>
+            <version>${webulizor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${webulizor.groupid}</groupId>
+            <artifactId>${webulizor.artifactid}</artifactId>
+            <version>${webulizor.version}</version>
+            <classifier>classes</classifier>
+        </dependency>
+    
+        <!-- You'll probably want the Servlet API: -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- or -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+            
+    </dependencies>
 ```
 
  * WAR overlay configuration:
  
  ```xml
- <build>
-    <finalName>mywebapp</finalName>
-
-    <plugins>
-
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.3</version>
-            <configuration>
-
-                <!-- If you inherit the webulizor web.xml you won't need your own: -->
-                <failOnMissingWebXml>false</failOnMissingWebXml>
-
-                <overlays>
-                    <overlay>
-                        <groupId>${webulizor.groupid}</groupId>
-                        <artifactId>${webulizor.artifactid}</artifactId>
-                    </overlay>
-                </overlays>
-
-            </configuration>
-        </plugin>
-
+     <build>
+        <finalName>mywebapp</finalName>
+        
+        <plugins>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    
+                    <!-- If you inherit the webulizor web.xml you won't need your own: -->
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    
+                    <overlays>
+                        <overlay>
+                            <groupId>${webulizor.groupid}</groupId>
+                            <artifactId>${webulizor.artifactid}</artifactId>
+                        </overlay>
+                    </overlays>
+                    
+                </configuration>
+            </plugin>
+            
     </plugins>
-
- </build>
+    
+</build>
 ```
