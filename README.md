@@ -38,17 +38,19 @@ Here are some `pom.xml` snippets to get you started:
 
  * Webulizor artifact details:
   
- ```
-<properties>
+ ```xml
+ <properties>
+ 
     <webulizor.groupid>com.github.davidcarboni</webulizor.groupid>
     <webulizor.artifactid>webulizor</webulizor.artifactid>
     <webulizor.version>0.6.5</webulizor.version>
-</properties>
+    
+ </properties>
 ```
 
  * Webulizor dependencies:
 
-```
+```xml
  <dependencies>
 
     <!-- Webulizor: -->
@@ -84,7 +86,7 @@ Here are some `pom.xml` snippets to get you started:
 
  * WAR overlay configuration:
  
- ```
+ ```xml
  <build>
     <finalName>mywebapp</finalName>
 
@@ -96,7 +98,7 @@ Here are some `pom.xml` snippets to get you started:
             <version>2.3</version>
             <configuration>
 
-                <!-- If you're inheriting the webulizor web.xml you won't need to define your own: -->
+                <!-- If you inherit the webulizor web.xml you won't need your own: -->
                 <failOnMissingWebXml>false</failOnMissingWebXml>
 
                 <overlays>
