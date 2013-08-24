@@ -34,20 +34,20 @@ The quickest way to get started is:
 
 ### Example pom configuration
 
-Here are some pom.xml snippets to get you started:
+Here are some `pom.xml` snippets to get you started:
 
  * Webulizor artifact details:
  
-    <properties>
+     <properties>
         <webulizor.groupid>com.github.davidcarboni</webulizor.groupid>
         <webulizor.artifactid>webulizor</webulizor.artifactid>
         <webulizor.version>0.6.5</webulizor.version>
-    </properties>
+     </properties>
 
 
  * Webulizor dependencies:
 
-    <dependencies>
+     <dependencies>
     
         <!-- Webulizor: -->
         <dependency>
@@ -77,12 +77,12 @@ Here are some pom.xml snippets to get you started:
             <version>3.1.0</version>
         </dependency>
             
-    </dependencies>
+     </dependencies>
 
 
  * WAR overlay configuration:
  
-    <build>
+     <build>
         <finalName>mywebapp</finalName>
 
         <plugins>
@@ -108,4 +108,4 @@ Here are some pom.xml snippets to get you started:
 
         </plugins>
 
-    </build>
+     </build>
