@@ -54,7 +54,7 @@ public class LinkTest {
 		when(action.getServletContext()).thenReturn(servletContext);
 		when(action.getRequest()).thenReturn(request);
 		when(servletContext.getContextPath()).thenReturn(contextPath);
-		link = new Link(action);
+		link = new Link(servletContext, request);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class LinkTest {
 
 		// Given
 		when(servletContext.getContextPath()).thenReturn("/");
-		link = new Link(action);
+		link = new Link(servletContext, request);
 		String path = "/path";
 
 		// When
@@ -83,7 +83,7 @@ public class LinkTest {
 
 		// Given
 		Link.DROP_CONTEXT = true;
-		link = new Link(action);
+		link = new Link(servletContext, request);
 		Link.DROP_CONTEXT = false;
 		String path = "/path";
 
@@ -95,7 +95,8 @@ public class LinkTest {
 	}
 
 	/**
-	 * Verifies that a path with a leading slash doesn't end up with a double-slash.
+	 * Verifies that a path with a leading slash doesn't end up with a
+	 * double-slash.
 	 */
 	@Test
 	public void shouldResolvePathWithLeadingSlash() {
@@ -111,7 +112,8 @@ public class LinkTest {
 	}
 
 	/**
-	 * Verifies that a path without a leading slash doesn't end up with a missing slash.
+	 * Verifies that a path without a leading slash doesn't end up with a
+	 * missing slash.
 	 */
 	@Test
 	public void shouldResolvePathWithoutLeadingSlash() {
@@ -171,7 +173,9 @@ public class LinkTest {
 		URI resolved = link.resolve(action);
 
 		// Then
-		assertEquals(contextPath + "/" + ActionDefault.class.getSimpleName().toLowerCase(), resolved.getPath());
+		assertEquals(contextPath + "/"
+				+ ActionDefault.class.getSimpleName().toLowerCase(),
+				resolved.getPath());
 	}
 
 	@Route(path = LinkTest.pathSlash)
@@ -275,7 +279,8 @@ public class LinkTest {
 		URI url = link.url(ActionSlash.class);
 
 		// Then
-		assertEquals("http://localhost" + contextPath + pathSlash, url.toString());
+		assertEquals("http://localhost" + contextPath + pathSlash,
+				url.toString());
 	}
 
 	@Test
@@ -291,7 +296,8 @@ public class LinkTest {
 		URI url = link.url(ActionSlash.class, queryString);
 
 		// Then
-		assertEquals("http://localhost" + contextPath + pathSlash + "?" + name + "=" + value, url.toString());
+		assertEquals("http://localhost" + contextPath + pathSlash + "?" + name
+				+ "=" + value, url.toString());
 	}
 
 	/**
@@ -317,7 +323,7 @@ public class LinkTest {
 		when(request.getServerName()).thenReturn(host);
 
 		// Create a new instance:
-		link = new Link(action);
+		link = new Link(servletContext, request);
 	}
 
 }

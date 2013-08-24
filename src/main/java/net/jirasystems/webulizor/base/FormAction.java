@@ -7,7 +7,8 @@ import net.jirasystems.webulizor.interfaces.Action;
 import net.jirasystems.webulizor.interfaces.Post;
 
 /**
- * Extends {@link ViewAction}, adding a "submitTo" property to the Velocity context.
+ * Extends {@link ViewAction}, adding a "submitTo" property to the Velocity
+ * context.
  * 
  * @author David Carboni
  * 
@@ -34,7 +35,9 @@ public class FormAction extends ViewAction {
 	@Override
 	public Action perform() throws IOException {
 
-		put("submitTo", new Link(this).resolve(submitTo));
+		put("submitTo",
+				new Link(this.getServletContext(), this.getRequest())
+						.resolve(submitTo));
 		return super.perform();
 	}
 

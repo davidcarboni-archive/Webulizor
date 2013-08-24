@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import net.jirasystems.resourceutil.ResourceUtil;
 import net.jirasystems.webulizor.interfaces.Action;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -38,8 +38,10 @@ public class Velocity {
 	 * @param servletContext
 	 *            Used to get a path to /WEB-INF/velocity.log
 	 */
-	public static void initialise(ServletContext servletContext) {
-		velocityLog = servletContext.getRealPath("WEB-INF") + File.separator + "velocity.log";
+	public static void initialise(String logPath) {
+		if (StringUtils.isNotBlank(logPath)) {
+			velocityLog = new File(logPath, "velocity.log").getPath();
+		}
 	}
 
 	/**
@@ -53,7 +55,8 @@ public class Velocity {
 	 * @throws VelocityException
 	 *             If an error occurs.
 	 */
-	public static String renderText(String templatePath, Map<String, Object> data) throws VelocityException {
+	public static String renderText(String templatePath,
+			Map<String, Object> data) throws VelocityException {
 
 		VelocityEngine velocityEngine = getVelocityText();
 		return render(velocityEngine, templatePath, data);
@@ -70,7 +73,8 @@ public class Velocity {
 	 * @throws VelocityException
 	 *             If an error occurs.
 	 */
-	public static String renderHtml(String templatePath, Map<String, Object> data) throws VelocityException {
+	public static String renderHtml(String templatePath,
+			Map<String, Object> data) throws VelocityException {
 
 		VelocityEngine velocityEngine = getVelocityHtml();
 		return render(velocityEngine, templatePath, data);
@@ -90,7 +94,8 @@ public class Velocity {
 	 * @throws IOException
 	 *             If an error occurs.
 	 */
-	public static void renderHtml(String templatePath, Map<String, Object> data, Action next) throws VelocityException,
+	public static void renderHtml(String templatePath,
+			Map<String, Object> data, Action next) throws VelocityException,
 			IOException {
 
 		VelocityEngine velocityEngine = getVelocityHtml();
@@ -111,13 +116,15 @@ public class Velocity {
 	 * @throws VelocityException
 	 *             If an error occurs.
 	 */
-	private static String render(VelocityEngine velocityEngine, String templatePath, Map<String, Object> data)
+	private static String render(VelocityEngine velocityEngine,
+			String templatePath, Map<String, Object> data)
 			throws VelocityException {
 
 		// Get the template:
 		Template template = velocityEngine.getTemplate(templatePath);
 		if (template == null) {
-			throw new VelocityException("Unable to locate template " + templatePath);
+			throw new VelocityException("Unable to locate template "
+					+ templatePath);
 		}
 
 		// Render:
@@ -135,7 +142,8 @@ public class Velocity {
 	 * @throws VelocityException
 	 *             If an exception is thrown during template processing.
 	 */
-	private static String render(Template template, Map<String, Object> data) throws VelocityException {
+	private static String render(Template template, Map<String, Object> data)
+			throws VelocityException {
 
 		try {
 			// Create a context.
@@ -158,7 +166,8 @@ public class Velocity {
 			return writer.toString().trim();
 
 		} catch (Exception e) {
-			throw new VelocityException("Error processing template \"" + template.getName() + "\".", e);
+			throw new VelocityException("Error processing template \""
+					+ template.getName() + "\".", e);
 		}
 	}
 
@@ -201,13 +210,16 @@ public class Velocity {
 	 * @throws VelocityException
 	 *             If an error occurs.
 	 */
-	private static VelocityEngine newVelocityEngine(boolean escapeHtml) throws VelocityException {
+	private static VelocityEngine newVelocityEngine(boolean escapeHtml)
+			throws VelocityException {
 		VelocityEngine result;
 
 		InputStream inStream = null;
 		try {
 			Properties defaults = new Properties();
-			defaults.put("runtime.log", velocityLog);
+			if (StringUtils.isNotBlank(velocityLog)) {
+				defaults.put("runtime.log", velocityLog);
+			}
 
 			if (escapeHtml) {
 				// Ensure that all values printed to the output are
@@ -221,7 +233,8 @@ public class Velocity {
 			// velocity.properties:
 			Properties properties;
 			try {
-				properties = ResourceUtil.getProperties("/velocity.properties", defaults);
+				properties = ResourceUtil.getProperties("/velocity.properties",
+						defaults);
 			} catch (IOException e) {
 				// Just use the defaults:
 				properties = defaults;
@@ -236,7 +249,8 @@ public class Velocity {
 			result = velocityEngine;
 
 		} catch (Exception e) {
-			throw new VelocityException("Error initialising the Velocity templating engine.", e);
+			throw new VelocityException(
+					"Error initialising the Velocity templating engine.", e);
 		} finally {
 			IOUtils.closeQuietly(inStream);
 		}

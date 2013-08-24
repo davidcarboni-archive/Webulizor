@@ -85,7 +85,11 @@ public class App extends HttpServlet {
 		log("Found " + get.size() + " GET actions.");
 		log("Found " + post.size() + " POST actions.");
 
-		Velocity.initialise(servletContext);
+		// Attempt to use WEB-INF as a log location.
+		// If we're running from a WAR this will be null and no Velocity log
+		// will be generated. TODO: Allow a log path to be set from .properties
+		String webInfPath = servletContext.getRealPath("WEB-INF");
+		Velocity.initialise(webInfPath);
 		Database.initialise(servletContext);
 	}
 

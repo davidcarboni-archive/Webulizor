@@ -102,7 +102,7 @@ public class ViewAction extends AbstractAction {
 	 */
 	public Link getLink() {
 		if (link == null) {
-			link = new Link(this);
+			link = new Link(this.getServletContext(), this.getRequest());
 		}
 		return link;
 	}
