@@ -6,9 +6,9 @@ Webulizor
 ### What is it?
 
 Webulizor is a Java webapp micro-framework. It's built on a couple of ideas:
- * in a world of continuous delivery the best place to put most configuration is directly in the code. If you need to change configuration it's safer to push a release than edit live configuration.
+ * in a world of continuous delivery the best place to put most configuration is directly in the code. If you need to change configuration it's safer to push a release than edit files on a live system.
  * refactoring code shouldn't break links. Why should you have to manually keep things in synch across code, configuration and HTML?
- * finally, /servlet/ in your URLs is visual noise and just plain ugly. Webulizor lets you put your controllers at the top level whilst forwarding anything that has a file extension to the default servlet (.css, .js, .png, etc.) 
+ * finally, `/servlet/` in your URLs is visual noise and just plain ugly. Webulizor lets you put your controllers at the top level whilst forwarding anything that has a file extension to the default servlet (.css, .js, .png, etc.) 
 
 Webulizor provides you with a couple of helpful bootstrap defaults:
  * HSQLDB so you can get on with prototyping instead of installing a database
@@ -26,9 +26,9 @@ Controllers are defined using annotations such as `@Route` and `@HomeAction`. `@
 ### Getting started
 
 The quickest way to get started is:
- * add Webulizor to your project as a WAR overlay
- * reference the -classes JAR in your dependencies
+ * add Webulizor to your project as a WAR overlay (`<type>war</type>`)
+ * reference the `-classes` JAR in your dependencies (`<classifier>classes</classifier>`)
  * create a class that extends `ViewAction` and annotate it with `@Route` and `@HomeAction`
- * create a Velocity template to match the package structure and name of your class
+ * create a Velocity template to match your package structure and the name of your class with a `.html` extension.
 
 
