@@ -17,29 +17,115 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class Database {
 
+	/** The default HSQL driver class. */
+	public static final String HSQL_DRIVER = "org.hsqldb.jdbcDriver";
+
 	private static String url;
 	private static String username = "sa";
 	private static String password = "";
 
 	/**
-	 * Initialises the JDBC driver.
+	 * Initialises HSQLDB, using an in-memory database.
+	 * <p>
+	 * This is a useful hack for persisting the database, but bear in mind it's
+	 * not servlet compliant. If your app gets run as an un-unpacked war file,
+	 * this won't work.
+	 * 
+	 * @param servletContext
+	 *            Used to set the path for the HSQLDB database files.
+	 */
+	public static void initialise() {
+
+		initialiseDriver(HSQL_DRIVER);
+		url = "jdbc:hsqldb:mem:aname";
+		username = "sa";
+		password = "";
+	}
+
+	/**
+	 * Initialises HSQLDB, storing the database under WEB-INF/database.
+	 * <p>
+	 * This is a useful hack for persisting the database, but bear in mind it's
+	 * not servlet compliant. If your app gets run as an un-unpacked war file,
+	 * this won't work.
 	 * 
 	 * @param servletContext
 	 *            Used to set the path for the HSQLDB database files.
 	 */
 	public static void initialise(ServletContext servletContext) {
 
+		initialiseDriver(HSQL_DRIVER);
+		setHsqldbPath(servletContext.getRealPath("WEB-INF/database"));
+		username = "sa";
+		password = "";
+	}
+
+	/**
+	 * Initialises HSQLDB, storing the database under the given path.
+	 * <p>
+	 * This allows you to store the database at a configured path.
+	 * 
+	 * @param servletContext
+	 *            Used to set the path for the HSQLDB database files.
+	 */
+	public static void initialise(String path) {
+
+		initialiseDriver(HSQL_DRIVER);
+		setHsqldbPath(path);
+		username = "sa";
+		password = "";
+	}
+
+	/**
+	 * Initialises JDBC with the given values. The given driver class will be
+	 * loaded as part of this call and you'll get an
+	 * {@link IllegalArgumentException} if it's missing from your classpath.
+	 * <p>
+	 * This allows you to use any JDBC connection, not just default HSQL.
+	 * 
+	 * @param servletContext
+	 *            Used to set the path for the HSQLDB database files.
+	 */
+	public static void initialise(String driverClass, String url,
+			String username, String password) {
+
+		initialiseDriver(driverClass);
+		Database.url = url;
+		Database.username = username;
+		Database.password = password;
+	}
+
+	/**
+	 * Initialises HSQLDB, storing the database under the given path.
+	 * 
+	 * @param path
+	 *            The filesystem path for HSQLDB.
+	 */
+	public static void initialiseDriver(String driverClass) {
+
 		// Load the driver:
-		String driverClass = "org.hsqldb.jdbcDriver";
 		try {
 			Class.forName(driverClass);
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Unable to locate driver class "
+			throw new IllegalArgumentException("Unable to locate driver class "
 					+ driverClass, e);
 		}
+	}
 
-		setPath(servletContext.getRealPath("WEB-INF/database"));
+	/**
+	 * @param path
+	 *            The filesystem path for HSQLDB.
+	 */
+	private static void setHsqldbPath(String path) {
+		File file = new File(path, "database");
+		String fullPath = FilenameUtils.separatorsToUnix(file.getPath());
 
+		// JDBC URL:
+		// Default to always shutting down the database and no write delay.
+		// We don't need high performance and preference is for committing data
+		// to disk:
+		url = "jdbc:hsqldb:" + fullPath
+				+ ";shutdown=true;hsqldb.write_delay=false";
 	}
 
 	/**
@@ -73,22 +159,6 @@ public class Database {
 
 		return connection;
 		// return ConnectionSpy.spy(connection);
-	}
-
-	/**
-	 * @param path
-	 *            The filesystem path for HSQLDB.
-	 */
-	public static void setPath(String path) {
-		File file = new File(path, "database");
-		String fullPath = FilenameUtils.separatorsToUnix(file.getPath());
-
-		// JDBC URL:
-		// Default to always shutting down the database and no write delay.
-		// We don't need high performance and preference is for committing data
-		// to disk:
-		url = "jdbc:hsqldb:" + fullPath
-				+ ";shutdown=true;hsqldb.write_delay=false";
 	}
 
 	/**
