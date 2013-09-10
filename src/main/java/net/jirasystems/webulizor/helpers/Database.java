@@ -2,12 +2,14 @@ package net.jirasystems.webulizor.helpers;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FilenameUtils;
+
+import com.jolbox.bonecp.BoneCP;
+import com.jolbox.bonecp.BoneCPConfig;
 
 /**
  * Provides access to the
@@ -21,8 +23,9 @@ public class Database {
 	public static final String HSQL_DRIVER = "org.hsqldb.jdbcDriver";
 
 	private static String url;
-	private static String username = "sa";
-	private static String password = "";
+	private static String username;
+	private static String password;
+	private static BoneCP connectionPool;
 
 	/**
 	 * Initialises HSQLDB, using an in-memory database.
@@ -34,12 +37,13 @@ public class Database {
 	 * @param servletContext
 	 *            Used to set the path for the HSQLDB database files.
 	 */
-	public static void initialise() {
+	public static void initialiseHsql() {
 
 		initialiseDriver(HSQL_DRIVER);
 		url = "jdbc:hsqldb:mem:aname";
 		username = "sa";
 		password = "";
+		initialiseConnectionPool();
 	}
 
 	/**
@@ -52,12 +56,13 @@ public class Database {
 	 * @param servletContext
 	 *            Used to set the path for the HSQLDB database files.
 	 */
-	public static void initialise(ServletContext servletContext) {
+	public static void initialiseHsql(ServletContext servletContext) {
 
 		initialiseDriver(HSQL_DRIVER);
 		setHsqldbPath(servletContext.getRealPath("WEB-INF/database"));
 		username = "sa";
 		password = "";
+		initialiseConnectionPool();
 	}
 
 	/**
@@ -68,12 +73,13 @@ public class Database {
 	 * @param servletContext
 	 *            Used to set the path for the HSQLDB database files.
 	 */
-	public static void initialise(String path) {
+	public static void initialiseHsql(String path) {
 
 		initialiseDriver(HSQL_DRIVER);
 		setHsqldbPath(path);
 		username = "sa";
 		password = "";
+		initialiseConnectionPool();
 	}
 
 	/**
@@ -93,6 +99,7 @@ public class Database {
 		Database.url = url;
 		Database.username = username;
 		Database.password = password;
+		initialiseConnectionPool();
 	}
 
 	/**
@@ -101,7 +108,7 @@ public class Database {
 	 * @param path
 	 *            The filesystem path for HSQLDB.
 	 */
-	public static void initialiseDriver(String driverClass) {
+	private static void initialiseDriver(String driverClass) {
 
 		// Load the driver:
 		try {
@@ -128,6 +135,38 @@ public class Database {
 				+ ";shutdown=true;hsqldb.write_delay=false";
 	}
 
+	private static void initialiseConnectionPool() {
+
+		// Configure the connection pool:
+		BoneCPConfig boneCPConfig = new BoneCPConfig();
+		boneCPConfig.setJdbcUrl(url);
+		boneCPConfig.setUsername(username);
+		boneCPConfig.setPassword(password);
+		boneCPConfig.setMinConnectionsPerPartition(5);
+		boneCPConfig.setMaxConnectionsPerPartition(1);
+		boneCPConfig.setPartitionCount(1);
+
+		// Instantiate the connection pool:
+		try {
+			connectionPool = new BoneCP(boneCPConfig);
+		} catch (SQLException e) {
+			throw new RuntimeException("Error initialising connection pool", e);
+		}
+
+		System.out.println("Database is at " + url);
+	}
+
+	/**
+	 * Shuts down the connection pool.
+	 */
+	public static void shutdown() {
+		if (connectionPool != null) {
+			System.out.println("Shutting down connection pool..");
+			connectionPool.shutdown();
+			System.out.println("Connection pool shut down.");
+		}
+	}
+
 	/**
 	 * Gets a new connection. The caller is responsible for closing the
 	 * connection.
@@ -135,30 +174,13 @@ public class Database {
 	 * @return A new connection to the database.
 	 */
 	public static Connection getConnection() {
-
-		Connection connection;
 		try {
-			connection = DriverManager.getConnection(url, username, password);
+			Connection connection = connectionPool.getConnection();
+			connection.setAutoCommit(false);
+			return connection;
 		} catch (SQLException e) {
-
-			// We're sometimes attempting to get a connection to
-			// HSQLDB when it's shutting down a connection, so retry:
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// Ignore;
-			}
-			try {
-				connection = DriverManager.getConnection(url, username,
-						password);
-			} catch (SQLException e2) {
-				throw new RuntimeException("Unable to get a connection to "
-						+ url, e2);
-			}
+			throw new RuntimeException("Error getting a database connection", e);
 		}
-
-		return connection;
-		// return ConnectionSpy.spy(connection);
 	}
 
 	/**
@@ -169,14 +191,6 @@ public class Database {
 	}
 
 	/**
-	 * @param url
-	 *            the url to set
-	 */
-	public static void setUrl(String url) {
-		Database.url = url;
-	}
-
-	/**
 	 * @return the username
 	 */
 	public static String getUsername() {
@@ -184,26 +198,10 @@ public class Database {
 	}
 
 	/**
-	 * @param username
-	 *            the username to set
-	 */
-	public static void setUsername(String username) {
-		Database.username = username;
-	}
-
-	/**
 	 * @return the password
 	 */
 	public static String getPassword() {
 		return password;
-	}
-
-	/**
-	 * @param password
-	 *            the password to set
-	 */
-	public static void setPassword(String password) {
-		Database.password = password;
 	}
 
 }

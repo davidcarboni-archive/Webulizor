@@ -90,7 +90,6 @@ public class App extends HttpServlet {
 		// will be generated. TODO: Allow a log path to be set from .properties
 		String webInfPath = servletContext.getRealPath("WEB-INF");
 		Velocity.initialise(webInfPath);
-		Database.initialise(servletContext);
 	}
 
 	/**
