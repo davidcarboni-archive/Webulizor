@@ -29,6 +29,7 @@ import net.jirasystems.webulizor.interfaces.ExceptionAware;
 import net.jirasystems.webulizor.interfaces.Get;
 import net.jirasystems.webulizor.interfaces.NotFoundAware;
 import net.jirasystems.webulizor.interfaces.Post;
+import net.jirasystems.webulizor.metrics.UserJourney;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -265,6 +266,9 @@ public class App extends HttpServlet {
 	private void doMethod(Map<String, Class<? extends Action>> actions,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Throwable {
+
+		// Note the request:
+		UserJourney.addRequest(request);
 
 		// Variables for this request path:
 		Map<String, Object> context = new HashMap<String, Object>();
