@@ -36,8 +36,9 @@ public class Path {
 	public static String getPath(Class<? extends Action> actionClass) {
 		String path = null;
 
-		if (actionClass.getAnnotation(HomeAction.class) != null) {
-			// This is the home action:
+		if (actionClass == null
+				|| actionClass.getAnnotation(HomeAction.class) != null) {
+			// Link to home:
 			path = "/";
 		} else {
 			Route route = actionClass.getAnnotation(Route.class);
@@ -53,8 +54,8 @@ public class Path {
 					path = actionClass.getSimpleName().toLowerCase();
 				}
 			} catch (NullPointerException e) {
-				throw new AppException("No " + Route.class.getSimpleName() + " annotation found on "
-						+ actionClass.getName(), e);
+				throw new AppException("No " + Route.class.getSimpleName()
+						+ " annotation found on " + actionClass.getName(), e);
 			}
 		}
 
