@@ -10,7 +10,8 @@ import java.util.Arrays;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * {@link Connection} implementation that allows you to spy on SQL statements going back and forth.
+ * {@link Connection} implementation that allows you to spy on SQL statements
+ * going back and forth.
  * 
  * @author David Carboni
  * 
@@ -18,8 +19,8 @@ import org.apache.commons.lang.StringUtils;
 public class ConnectionSpy {
 
 	/**
-	 * Wraps the given {@link PreparedStatement} in a Java dynamic proxy which will log method
-	 * calls.
+	 * Wraps the given {@link PreparedStatement} in a Java dynamic proxy which
+	 * will log method calls.
 	 * 
 	 * @param connection
 	 *            The {@link Connection} to be spied.
@@ -27,72 +28,94 @@ public class ConnectionSpy {
 	 */
 	public static Connection spy(final Connection connection) {
 
+		printCaller("Spying connection");
 		InvocationHandler handler = new InvocationHandler() {
 
 			private Connection c = connection;
 
 			@Override
-			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-
-				// Get caller:
-				Exception e = new Exception();
-				e.fillInStackTrace();
-				StackTraceElement[] stackTrace = e.getStackTrace();
-				int i = 0;
-				boolean found = false;
-				while (i < stackTrace.length && !found) {
-					StackTraceElement stackTraceElement = stackTrace[i];
-					if (stackTraceElement.getClassName().startsWith("org.workdocx.services.")) {
-						found = true;
-					}
-					i++;
-				}
+			public Object invoke(Object proxy, Method method, Object[] args)
+					throws Throwable {
 
 				// Log
 				if (StringUtils.equals("close", method.getName())) {
-					System.out.println(Connection.class.getSimpleName() + "." + method.getName() + "("
-							+ Arrays.toString(args) + ")");
+					printCaller(Connection.class.getSimpleName() + "."
+							+ method.getName() + "(" + Arrays.toString(args)
+							+ ")");
 				}
 
 				// Invoke the method
 				Object result = method.invoke(c, args);
 
-//				// If the result is a PreparedStatement, spy that too:
-//				if (result != null && PreparedStatement.class.isAssignableFrom(result.getClass())) {
-//					result = spy((PreparedStatement) result, logger);
-//				}
+				// // If the result is a PreparedStatement, spy that too:
+				// if (result != null &&
+				// PreparedStatement.class.isAssignableFrom(result.getClass()))
+				// {
+				// result = spy((PreparedStatement) result, logger);
+				// }
 
 				return result;
 			}
 		};
-		Object proxy = Proxy.newProxyInstance(ConnectionSpy.class.getClassLoader(), new Class[] {Connection.class},
-				handler);
+		Object proxy = Proxy.newProxyInstance(
+				ConnectionSpy.class.getClassLoader(),
+				new Class[] { Connection.class }, handler);
 		return (Connection) proxy;
 	}
 
+	private static void printCaller(String message) {
+
+		// Get caller:
+		Exception e = new Exception();
+		e.fillInStackTrace();
+		StackTraceElement[] stackTrace = e.getStackTrace();
+		int i = 0;
+		boolean found = false;
+		loop: while (i < stackTrace.length && !found) {
+			StackTraceElement stackTraceElement = stackTrace[i];
+			if (stackTraceElement.getClassName().startsWith("net.jirasystems.")) {
+				found = true;
+				break loop;
+			}
+			i++;
+		}
+
+		String caller;
+		if (found) {
+			caller = stackTrace[i].toString();
+		} else {
+			caller = "(not found)";
+		}
+		System.out.println(caller + ": " + message);
+	}
+
 	/**
-	 * Wraps the given {@link PreparedStatement} in a Java dynamic proxy which will log method
-	 * calls.
+	 * Wraps the given {@link PreparedStatement} in a Java dynamic proxy which
+	 * will log method calls.
 	 * 
 	 * @param preparedStatement
 	 *            The {@link PreparedStatement} to be spied.
 	 * @return The wrapped {@link PreparedStatement}
 	 */
-	private static PreparedStatement spy(final PreparedStatement preparedStatement) {
+	private static PreparedStatement spy(
+			final PreparedStatement preparedStatement) {
 
 		InvocationHandler handler = new InvocationHandler() {
 
 			private PreparedStatement ps = preparedStatement;
 
 			@Override
-			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-				System.out.println(PreparedStatement.class.getSimpleName() + "." + method.getName() + "("
-						+ Arrays.toString(args) + ")");
+			public Object invoke(Object proxy, Method method, Object[] args)
+					throws Throwable {
+				System.out.println(PreparedStatement.class.getSimpleName()
+						+ "." + method.getName() + "(" + Arrays.toString(args)
+						+ ")");
 				return method.invoke(ps, args);
 			}
 		};
-		Object proxy = Proxy.newProxyInstance(ConnectionSpy.class.getClassLoader(),
-				new Class[] {PreparedStatement.class}, handler);
+		Object proxy = Proxy.newProxyInstance(
+				ConnectionSpy.class.getClassLoader(),
+				new Class[] { PreparedStatement.class }, handler);
 		return (PreparedStatement) proxy;
 	}
 }

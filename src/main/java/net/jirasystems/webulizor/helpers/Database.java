@@ -175,8 +175,13 @@ public class Database {
 	 */
 	public static Connection getConnection() {
 		try {
+//			System.out.println("Connection pool has "
+//					+ connectionPool.getTotalLeased()
+//					+ " connections in use and "
+//					+ connectionPool.getTotalFree() + " free connections.");
 			Connection connection = connectionPool.getConnection();
 			connection.setAutoCommit(false);
+//			return ConnectionSpy.spy(connection);
 			return connection;
 		} catch (SQLException e) {
 			throw new RuntimeException("Error getting a database connection", e);
