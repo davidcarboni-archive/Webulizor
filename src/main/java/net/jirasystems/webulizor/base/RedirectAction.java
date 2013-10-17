@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import net.jirasystems.webulizor.annotations.Route;
+import net.jirasystems.webulizor.helpers.Link;
 import net.jirasystems.webulizor.helpers.Path;
 import net.jirasystems.webulizor.helpers.QueryString;
 import net.jirasystems.webulizor.interfaces.Action;
@@ -29,8 +30,8 @@ public class RedirectAction extends AbstractAction {
 	 * Convenience constructor.
 	 * 
 	 * @param location
-	 *            The location. If this is relative to the context and servlet path, it will be
-	 *            expanded to an absolute URI.
+	 *            The location. If this is relative to the context and servlet
+	 *            path, it will be expanded to an absolute URI.
 	 */
 	public RedirectAction(URI location) {
 		this.location = location;
@@ -40,8 +41,8 @@ public class RedirectAction extends AbstractAction {
 	 * Convenience constructor.
 	 * 
 	 * @param next
-	 *            Redirecs to the given {@link Action} class. The class must be annotated with
-	 *            {@link Route}.
+	 *            Redirecs to the given {@link Action} class. The class must be
+	 *            annotated with {@link Route}.
 	 */
 	public RedirectAction(Class<? extends Get> next) {
 		setLocation(next);
@@ -51,8 +52,8 @@ public class RedirectAction extends AbstractAction {
 	 * Convenience constructor.
 	 * 
 	 * @param next
-	 *            Redirecs to the given {@link Action} class. The class must be annotated with
-	 *            {@link Route}.
+	 *            Redirecs to the given {@link Action} class. The class must be
+	 *            annotated with {@link Route}.
 	 */
 	public RedirectAction(Class<? extends Get> next, String fragment) {
 		setLocation(next);
@@ -63,8 +64,8 @@ public class RedirectAction extends AbstractAction {
 	 * Convenience constructor.
 	 * 
 	 * @param action
-	 *            Redirects to the given {@link Action} class. The class must implement {@link Get}
-	 *            and be annotated with {@link Route}.
+	 *            Redirects to the given {@link Action} class. The class must
+	 *            implement {@link Get} and be annotated with {@link Route}.
 	 * @param queryString
 	 *            A {@link QueryString} to append to the redirect location.
 	 */
@@ -83,8 +84,9 @@ public class RedirectAction extends AbstractAction {
 	/**
 	 * Absolutizzes the location if necessary.
 	 * 
-	 * @return If {@link #location} is absolute, {@link #location}, otherwise makes
-	 *         {@link #location} into an absolute URL, as it should be for a redirect.
+	 * @return If {@link #location} is absolute, {@link #location}, otherwise
+	 *         makes {@link #location} into an absolute URL, as it should be for
+	 *         a redirect.
 	 */
 	public URI absoluteLocation() {
 
@@ -94,9 +96,11 @@ public class RedirectAction extends AbstractAction {
 		if (StringUtils.isEmpty(location.getHost())) {
 
 			// Get request URI information:
-			String scheme = getRequest().getScheme();
-			String host = getRequest().getServerName();
-			int port = getRequest().getServerPort();
+			Link link = new Link(getServletContext(), getRequest());
+			URI url = link.url();
+			String scheme = url.getScheme();
+			String host = url.getHost();
+			int port = url.getPort();
 			String path = location.getPath();
 			String query;
 			if (queryString != null) {
@@ -104,7 +108,7 @@ public class RedirectAction extends AbstractAction {
 			} else {
 				query = location.getQuery();
 			}
-//			String fragment = location.getFragment();
+			// String fragment = location.getFragment();
 
 			// Adjust for default ports:
 			if (port == 80 || port == 443) {
@@ -124,7 +128,9 @@ public class RedirectAction extends AbstractAction {
 				uriBuilder.setQuery(query);
 				uriBuilder.setFragment(fragment);
 				absoluteLocation = uriBuilder.build();
-				getServletContext().log("Updated redirect URI to an absolute URL: " + absoluteLocation);
+				getServletContext().log(
+						"Updated redirect URI to an absolute URL: "
+								+ absoluteLocation);
 			} catch (URISyntaxException e) {
 				throw new RuntimeException("Error adjusting redirect URI", e);
 			}
