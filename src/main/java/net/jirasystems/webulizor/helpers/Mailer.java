@@ -8,10 +8,11 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 import net.jirasystems.resourceutil.ResourceUtil;
 import net.jirasystems.webulizor.framework.AppException;
+
+import com.sun.mail.smtp.SMTPMessage;
 
 /**
  * Simple email sender.
@@ -34,10 +35,12 @@ public final class Mailer {
 	 */
 	public void sendEmail(String from, String to, String subject, String body) {
 		Session session = Session.getDefaultInstance(fetchConfig(), null);
-		MimeMessage message = new MimeMessage(session);
+		SMTPMessage message = new SMTPMessage(session);
 		try {
+			message.setEnvelopeFrom(from);
 			message.setSender(new InternetAddress(from));
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(
+					to));
 			message.setSubject(subject);
 			message.setText(body);
 			Transport.send(message);
@@ -53,11 +56,12 @@ public final class Mailer {
 		if (fMailServerConfig == null) {
 			String name = "/mail.properties";
 			try {
-				fMailServerConfig = ResourceUtil.getProperties("/mail.properties");
-//				Properties result = new Properties(fMailServerConfig);
-//				result.putAll(System.getProperties());
-//				result.putAll(fMailServerConfig);
-//				fMailServerConfig = result;
+				fMailServerConfig = ResourceUtil
+						.getProperties("/mail.properties");
+				// Properties result = new Properties(fMailServerConfig);
+				// result.putAll(System.getProperties());
+				// result.putAll(fMailServerConfig);
+				// fMailServerConfig = result;
 			} catch (IOException ex) {
 				throw new RuntimeException("Cannot open " + name);
 			}
