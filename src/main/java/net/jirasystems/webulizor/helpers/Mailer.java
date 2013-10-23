@@ -37,8 +37,9 @@ public final class Mailer {
 		Session session = Session.getDefaultInstance(fetchConfig(), null);
 		SMTPMessage message = new SMTPMessage(session);
 		try {
-			message.setEnvelopeFrom(from);
-			message.setSender(new InternetAddress(from));
+			InternetAddress fromAddress = new InternetAddress(from);
+			message.setEnvelopeFrom(fromAddress.getAddress());
+			message.setSender(fromAddress);
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(
 					to));
 			message.setSubject(subject);
