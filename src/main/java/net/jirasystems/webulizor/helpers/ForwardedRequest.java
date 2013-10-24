@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 
 public class ForwardedRequest {
 
+	private static boolean spoken;
+
 	/**
 	 * Wraps the given {@link PreparedStatement} in a Java dynamic proxy which
 	 * will log method calls.
@@ -79,7 +81,9 @@ public class ForwardedRequest {
 					if (forwardedHost != null
 							&& !StringUtils.equals(forwardedHost, host)) {
 						host = forwardedHost;
-						System.out.println("Host updated to: " + host);
+						if (!ForwardedRequest.spoken) {
+							System.out.println("Host updated to: " + host);
+						}
 					}
 
 					// Update request scheme and port:
@@ -95,8 +99,12 @@ public class ForwardedRequest {
 							serverPort = 80;
 							secure = false;
 						}
-						System.out.println("Secure/Scheme/Port updated to: "
-								+ scheme + "/" + secure + "/" + serverPort);
+						if (!ForwardedRequest.spoken) {
+							System.out
+									.println("Secure/Scheme/Port updated to: "
+											+ scheme + "/" + secure + "/"
+											+ serverPort);
+						}
 					}
 
 					// Update client:
@@ -105,6 +113,7 @@ public class ForwardedRequest {
 						client = forwardedClient;
 					}
 
+					ForwardedRequest.spoken = true;
 					initialised = true;
 				}
 			}
