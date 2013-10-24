@@ -2,14 +2,12 @@ package net.jirasystems.webulizor.helpers;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FilenameUtils;
-
-import com.jolbox.bonecp.BoneCP;
-import com.jolbox.bonecp.BoneCPConfig;
 
 /**
  * Provides access to the
@@ -25,7 +23,8 @@ public class Database {
 	private static String url;
 	private static String username;
 	private static String password;
-	private static BoneCP connectionPool;
+
+	// private static BoneCP connectionPool;
 
 	/**
 	 * Initialises HSQLDB, using an in-memory database.
@@ -137,21 +136,21 @@ public class Database {
 
 	private static void initialiseConnectionPool() {
 
-		// Configure the connection pool:
-		BoneCPConfig boneCPConfig = new BoneCPConfig();
-		boneCPConfig.setJdbcUrl(url);
-		boneCPConfig.setUsername(username);
-		boneCPConfig.setPassword(password);
-		boneCPConfig.setMinConnectionsPerPartition(5);
-		boneCPConfig.setMaxConnectionsPerPartition(1);
-		boneCPConfig.setPartitionCount(1);
-
-		// Instantiate the connection pool:
-		try {
-			connectionPool = new BoneCP(boneCPConfig);
-		} catch (SQLException e) {
-			throw new RuntimeException("Error initialising connection pool", e);
-		}
+		// // Configure the connection pool:
+		// BoneCPConfig boneCPConfig = new BoneCPConfig();
+		// boneCPConfig.setJdbcUrl(url);
+		// boneCPConfig.setUsername(username);
+		// boneCPConfig.setPassword(password);
+		// boneCPConfig.setMinConnectionsPerPartition(5);
+		// boneCPConfig.setMaxConnectionsPerPartition(1);
+		// boneCPConfig.setPartitionCount(1);
+		//
+		// // Instantiate the connection pool:
+		// try {
+		// connectionPool = new BoneCP(boneCPConfig);
+		// } catch (SQLException e) {
+		// throw new RuntimeException("Error initialising connection pool", e);
+		// }
 
 		System.out.println("Database is at " + url);
 	}
@@ -160,11 +159,11 @@ public class Database {
 	 * Shuts down the connection pool.
 	 */
 	public static void shutdown() {
-		if (connectionPool != null) {
-			System.out.println("Shutting down connection pool..");
-			connectionPool.shutdown();
-			System.out.println("Connection pool shut down.");
-		}
+		// if (connectionPool != null) {
+		// System.out.println("Shutting down connection pool..");
+		// connectionPool.shutdown();
+		// System.out.println("Connection pool shut down.");
+		// }
 	}
 
 	/**
@@ -175,13 +174,15 @@ public class Database {
 	 */
 	public static Connection getConnection() {
 		try {
-//			System.out.println("Connection pool has "
-//					+ connectionPool.getTotalLeased()
-//					+ " connections in use and "
-//					+ connectionPool.getTotalFree() + " free connections.");
-			Connection connection = connectionPool.getConnection();
+			// System.out.println("Connection pool has "
+			// + connectionPool.getTotalLeased()
+			// + " connections in use and "
+			// + connectionPool.getTotalFree() + " free connections.");
+			// Connection connection = connectionPool.getConnection();
+			Connection connection = DriverManager.getConnection(url, username,
+					password);
 			connection.setAutoCommit(false);
-//			return ConnectionSpy.spy(connection);
+			// return ConnectionSpy.spy(connection);
 			return connection;
 		} catch (SQLException e) {
 			throw new RuntimeException("Error getting a database connection", e);
