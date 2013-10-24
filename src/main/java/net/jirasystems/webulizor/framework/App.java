@@ -328,6 +328,7 @@ public class App extends HttpServlet {
 
 				// Get a connection if we haven't already:
 				if (result == null) {
+					System.out.println("Getting database connection.");
 					result = Database.getConnection();
 				}
 
@@ -383,6 +384,7 @@ public class App extends HttpServlet {
 		if (connection != null) {
 			try {
 				// connection.prepareStatement("SHUTDOWN").execute();
+				System.out.println("Closing database connection.");
 				connection.close();
 			} catch (SQLException e) {
 				System.out.println(ExceptionUtils.getStackTrace(e));
