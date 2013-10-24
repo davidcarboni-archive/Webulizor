@@ -6,6 +6,8 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -26,12 +28,17 @@ public class ConnectionSpy {
 	 *            The {@link Connection} to be spied.
 	 * @return The wrapped {@link PreparedStatement}
 	 */
-	public static Connection spy(final Connection connection) {
+	public static Connection spy(final String name, final Connection connection) {
 
-		printCaller("Spying connection");
+		// Watchdog for unclosed connection:
+		final Timer t = new Timer(true);
+		final Exception e = new Exception();
+		e.fillInStackTrace();
+
 		InvocationHandler handler = new InvocationHandler() {
 
 			private Connection c = connection;
+			final Timer timer = t;
 
 			@Override
 			public Object invoke(Object proxy, Method method, Object[] args)
@@ -39,9 +46,7 @@ public class ConnectionSpy {
 
 				// Log
 				if (StringUtils.equals("close", method.getName())) {
-					printCaller(Connection.class.getSimpleName() + "."
-							+ method.getName() + "(" + Arrays.toString(args)
-							+ ")");
+					timer.cancel();
 				}
 
 				// Invoke the method
@@ -60,33 +65,21 @@ public class ConnectionSpy {
 		Object proxy = Proxy.newProxyInstance(
 				ConnectionSpy.class.getClassLoader(),
 				new Class[] { Connection.class }, handler);
-		return (Connection) proxy;
-	}
 
-	private static void printCaller(String message) {
+		// Set up a connection close watchdog:
+		final int timeout = 5000;
+		TimerTask task = new TimerTask() {
+			private String identifier = name;
 
-		// Get caller:
-		Exception e = new Exception();
-		e.fillInStackTrace();
-		StackTraceElement[] stackTrace = e.getStackTrace();
-		int i = 0;
-		boolean found = false;
-		loop: while (i < stackTrace.length && !found) {
-			StackTraceElement stackTraceElement = stackTrace[i];
-			if (stackTraceElement.getClassName().startsWith("net.jirasystems.")) {
-				found = true;
-				break loop;
+			@Override
+			public void run() {
+				System.out.println("Connection unclosed after "
+						+ (timeout / 1000) + " seconds: " + identifier);
 			}
-			i++;
-		}
+		};
+		t.schedule(task, timeout);
 
-		String caller;
-		if (found) {
-			caller = stackTrace[i].toString();
-		} else {
-			caller = "(not found)";
-		}
-		System.out.println(caller + ": " + message);
+		return (Connection) proxy;
 	}
 
 	/**

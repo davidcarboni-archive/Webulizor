@@ -172,7 +172,7 @@ public class Database {
 	 * 
 	 * @return A new connection to the database.
 	 */
-	public static Connection getConnection() {
+	public static Connection getConnection(String name) {
 		try {
 			// System.out.println("Connection pool has "
 			// + connectionPool.getTotalLeased()
@@ -181,6 +181,7 @@ public class Database {
 			// Connection connection = connectionPool.getConnection();
 			Connection connection = DriverManager.getConnection(url, username,
 					password);
+			connection = ConnectionSpy.spy(name, connection);
 			connection.setAutoCommit(false);
 			// return ConnectionSpy.spy(connection);
 			return connection;

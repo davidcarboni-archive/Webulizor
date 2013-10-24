@@ -281,7 +281,8 @@ public class App extends HttpServlet {
 		// Follow the [path of] Actions:
 		try {
 			while (action != null) {
-				connection = setupConnection(action, connection);
+				connection = setupConnection(request.getRequestURI(), action,
+						connection);
 				setup(action, request, response, connection, context);
 				action = action.perform();
 			}
@@ -310,8 +311,8 @@ public class App extends HttpServlet {
 	 * @throws SQLException
 	 *             If a database error occurs.
 	 */
-	private Connection setupConnection(Action action, Connection connection)
-			throws SQLException {
+	private Connection setupConnection(String name, Action action,
+			Connection connection) throws SQLException {
 		Connection result = connection;
 
 		if (action != null) {
@@ -329,8 +330,7 @@ public class App extends HttpServlet {
 
 				// Get a connection if we haven't already:
 				if (result == null) {
-					System.out.println("Getting database connection.");
-					result = Database.getConnection();
+					result = Database.getConnection(name);
 				}
 
 				// If this action requires a transaction and
@@ -384,8 +384,6 @@ public class App extends HttpServlet {
 	private void closeConnection(Connection connection) {
 		if (connection != null) {
 			try {
-				// connection.prepareStatement("SHUTDOWN").execute();
-				System.out.println("Closing database connection.");
 				connection.close();
 			} catch (SQLException e) {
 				System.out.println(ExceptionUtils.getStackTrace(e));
