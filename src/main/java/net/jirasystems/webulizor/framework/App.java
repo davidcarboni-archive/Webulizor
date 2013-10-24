@@ -34,6 +34,7 @@ import net.jirasystems.webulizor.metrics.UserJourney;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.http.HttpStatus;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
@@ -200,7 +201,7 @@ public class App extends HttpServlet {
 		try {
 			doMethod(this.get, ForwardedRequest.newInstance(request), response);
 		} catch (Throwable t) {
-			doError(request, t);
+			doError(request, response, t);
 		}
 	}
 
@@ -210,7 +211,7 @@ public class App extends HttpServlet {
 		try {
 			doMethod(this.post, ForwardedRequest.newInstance(request), response);
 		} catch (Throwable t) {
-			doError(request, t);
+			doError(request, response, t);
 		}
 	}
 
@@ -223,8 +224,11 @@ public class App extends HttpServlet {
 	 * @throws ServletException
 	 *             IF {@link #exceptionAction} is not defined.
 	 */
-	private void doError(HttpServletRequest request, Throwable t)
-			throws ServletException {
+	private void doError(HttpServletRequest request,
+			HttpServletResponse response, Throwable t) throws ServletException {
+
+		// Default status:
+		response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
 		if (this.exceptionAction != null) {
 
@@ -236,6 +240,10 @@ public class App extends HttpServlet {
 
 			// Try to perform the action:
 			try {
+				Connection connection = setupConnection(
+						request.getRequestURI(), errorAction, null);
+				Map<String, Object> context = new HashMap<String, Object>();
+				setup(errorAction, request, response, connection, context);
 				errorAction.perform();
 			} catch (Exception e) {
 				throw new ServletException("Unable to process error "
