@@ -69,27 +69,28 @@ public class Link {
 		scheme = request.getScheme();
 		host = request.getServerName();
 
-		// Do we need to consider X-Forwarded-* headers?
-
-		String forwardedHost = request.getHeader("X-Forwarded-Host");
-		String forwardedScheme = request.getHeader("X-Forwarded-Proto");
-
-		if (forwardedHost != null && !StringUtils.equals(forwardedHost, host)) {
-			host = forwardedHost;
-		}
-
-		if (forwardedScheme != null
-				&& !StringUtils.equals(forwardedScheme, scheme)) {
-			scheme = forwardedScheme;
-			// Assume standard https or http ports if it's been forwarded:
-			if (StringUtils.equalsIgnoreCase("https", scheme)) {
-				serverPort = 443;
-				secure = true;
-			} else {
-				serverPort = 80;
-				secure = false;
-			}
-		}
+		// // Do we need to consider X-Forwarded-* headers?
+		//
+		// String forwardedHost = request.getHeader("X-Forwarded-Host");
+		// String forwardedScheme = request.getHeader("X-Forwarded-Proto");
+		//
+		// if (forwardedHost != null && !StringUtils.equals(forwardedHost,
+		// host)) {
+		// host = forwardedHost;
+		// }
+		//
+		// if (forwardedScheme != null
+		// && !StringUtils.equals(forwardedScheme, scheme)) {
+		// scheme = forwardedScheme;
+		// // Assume standard https or http ports if it's been forwarded:
+		// if (StringUtils.equalsIgnoreCase("https", scheme)) {
+		// serverPort = 443;
+		// secure = true;
+		// } else {
+		// serverPort = 80;
+		// secure = false;
+		// }
+		// }
 	}
 
 	/**

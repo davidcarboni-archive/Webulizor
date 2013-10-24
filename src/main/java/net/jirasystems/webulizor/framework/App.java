@@ -22,6 +22,7 @@ import net.jirasystems.webulizor.annotations.HomeAction;
 import net.jirasystems.webulizor.annotations.NotFoundAction;
 import net.jirasystems.webulizor.annotations.Route;
 import net.jirasystems.webulizor.helpers.Database;
+import net.jirasystems.webulizor.helpers.ForwardedRequest;
 import net.jirasystems.webulizor.helpers.Path;
 import net.jirasystems.webulizor.helpers.Velocity;
 import net.jirasystems.webulizor.interfaces.Action;
@@ -197,7 +198,7 @@ public class App extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException {
 		try {
-			doMethod(this.get, request, response);
+			doMethod(this.get, ForwardedRequest.newInstance(request), response);
 		} catch (Throwable t) {
 			doError(request, t);
 		}
@@ -207,7 +208,7 @@ public class App extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException {
 		try {
-			doMethod(this.post, request, response);
+			doMethod(this.post, ForwardedRequest.newInstance(request), response);
 		} catch (Throwable t) {
 			doError(request, t);
 		}
