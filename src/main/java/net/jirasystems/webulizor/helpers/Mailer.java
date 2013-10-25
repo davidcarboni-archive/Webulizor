@@ -38,8 +38,8 @@ public final class Mailer {
 		SMTPMessage message = new SMTPMessage(session);
 		try {
 			InternetAddress fromAddress = new InternetAddress(from);
-			message.setEnvelopeFrom(fromAddress.getAddress());
 			message.setSender(fromAddress);
+			message.setEnvelopeFrom(fromAddress.getAddress());
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(
 					to));
 			message.setSubject(subject);
