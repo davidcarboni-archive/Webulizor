@@ -26,10 +26,14 @@ public class FormAction extends ViewAction {
 	}
 
 	/**
-	 * Default constructor.
+	 * Sets this class as {@link #submitTo} if it implements {@link Post}.
 	 */
+	@SuppressWarnings("unchecked")
 	public FormAction() {
-		// Default constructor.
+		// Set this class as the form sumbission action if it implements Post:
+		if (Post.class.isAssignableFrom(this.getClass())) {
+			submitTo = (Class<? extends Post>) this.getClass();
+		}
 	}
 
 	@Override
