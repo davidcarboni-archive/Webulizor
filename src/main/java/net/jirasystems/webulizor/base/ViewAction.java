@@ -42,10 +42,13 @@ public class ViewAction extends AbstractAction {
 		this.templatePath = getDefaultTemplatePath(this);
 	}
 
-	public static String getDefaultTemplatePath(Object controller) {
+	public static String getDefaultTemplatePath(Class<?> controllerClass) {
 		// Default template path for a given class:
-		return "/" + controller.getClass().getName().replace('.', '/')
-				+ ".html";
+		return "/" + controllerClass.getName().replace('.', '/') + ".html";
+	}
+
+	public static String getDefaultTemplatePath(Object controller) {
+		return getDefaultTemplatePath(controller.getClass());
 	}
 
 	@Override
