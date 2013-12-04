@@ -131,7 +131,7 @@ public class Link {
 		String fullPath = contextPath + leadingSlash(path);
 		builder.setPath(fullPath);
 		if (queryString != null) {
-			builder.setQuery(queryString.toQueryString());
+			builder.setParameters(queryString);
 		}
 		try {
 			return builder.build();
@@ -177,7 +177,7 @@ public class Link {
 		String fullPath = contextPath + leadingSlash(Path.getPath(action));
 		builder.setPath(fullPath);
 		if (queryString != null) {
-			builder.setQuery(queryString.toQueryString());
+			builder.setParameters(queryString);
 		}
 		try {
 			return builder.build();
@@ -216,7 +216,7 @@ public class Link {
 		URIBuilder builder = new URIBuilder();
 		URI path = resolve(action, queryString);
 		builder.setPath(path.getPath());
-		builder.setQuery(path.getQuery());
+		builder.setParameters(queryString);
 		try {
 			return url().resolve(builder.build());
 		} catch (URISyntaxException e) {
