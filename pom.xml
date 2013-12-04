@@ -3,7 +3,7 @@
 	<groupId>com.github.davidcarboni</groupId>
 	<artifactId>webulizor</artifactId>
 	<packaging>war</packaging>
-	<version>0.7.2</version>
+	<version>0.7.3-SNAPSHOT</version>
 	<name>Webulizor</name>
 	<description>Webapp micro-framework.</description>
 	<url>https://github.com/davidcarboni/Webulizor</url>
@@ -21,7 +21,7 @@
 		<url>https://github.com/davidcarboni/Webulizor</url>
 		<connection>scm:git:git://github.com/davidcarboni/Webulizor.git</connection>
 		<developerConnection>scm:git:git@github.com:davidcarboni/Webulizor.git</developerConnection>
-		<tag>webulizor-0.7.2</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<properties>
