@@ -239,15 +239,20 @@ public class App extends HttpServlet {
 			}
 
 			// Try to perform the action:
+			Connection connection = null;
 			try {
-				Connection connection = setupConnection(
-						request.getRequestURI(), errorAction, null);
+				connection = setupConnection(request.getRequestURI(),
+						errorAction, null);
 				Map<String, Object> context = new HashMap<String, Object>();
 				setup(errorAction, request, response, connection, context);
 				errorAction.perform();
+				commitConnection(connection);
 			} catch (Exception e) {
+				rollbackConnection(connection);
 				throw new ServletException("Unable to process error "
 						+ Action.class.getSimpleName(), e);
+			} finally {
+				closeConnection(connection);
 			}
 
 		} else {
