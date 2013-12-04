@@ -3,6 +3,7 @@ package net.jirasystems.webulizor.base;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import net.jirasystems.webulizor.annotations.DatabaseConnection;
 import net.jirasystems.webulizor.annotations.Route;
 import net.jirasystems.webulizor.helpers.Link;
 import net.jirasystems.webulizor.helpers.Path;
@@ -19,6 +20,7 @@ import org.apache.http.client.utils.URIBuilder;
  * @author David Carboni
  * 
  */
+@DatabaseConnection(required = false)
 public class RedirectAction extends AbstractAction {
 
 	private int statusCode = 302;
