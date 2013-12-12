@@ -42,7 +42,7 @@ Here are some `pom.xml` snippets to get you started:
     <properties>
         <webulizor.groupid>com.github.davidcarboni</webulizor.groupid>
         <webulizor.artifactid>webulizor</webulizor.artifactid>
-        <webulizor.version>0.6.5</webulizor.version>
+        <webulizor.version>0.7.4</webulizor.version>
     </properties>
 ```
 
