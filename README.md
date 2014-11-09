@@ -2,6 +2,7 @@
 Webulizor
 ----------
 
+I am no longer maintaining Webulizor. If you've arrived here looking for an efficient Java webapp framework, take a look at [Restolino](https://github.com/davidcarboni/restolino)
 
 ### What is it?
 
